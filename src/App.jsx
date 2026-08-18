@@ -239,7 +239,7 @@ function PinholeOpticsLearn({ onOpen3D }) {
     onPointerUp: (e) => {
       try {
         e.currentTarget.releasePointerCapture(e.pointerId);
-      } catch (_) {}
+      } catch (_) { }
 
       e.currentTarget.blur();
     },
@@ -288,7 +288,7 @@ function PinholeOpticsLearn({ onOpen3D }) {
   const upperEscapeX =
     WALL_X +
     (0 - WALL_TOP) /
-      upperEscapeSlope;
+    upperEscapeSlope;
 
   const lowerEscapeSlope =
     (WALL_BOTTOM - source.y) /
@@ -297,7 +297,7 @@ function PinholeOpticsLearn({ onOpen3D }) {
   const lowerEscapeX =
     WALL_X +
     (VB_H - WALL_BOTTOM) /
-      lowerEscapeSlope;
+    lowerEscapeSlope;
 
 
   /*
@@ -353,10 +353,10 @@ function PinholeOpticsLearn({ onOpen3D }) {
     const landY =
       throughHole
         ? projectToScreen(
-            source,
-            gate,
-            stepScreenX
-          )
+          source,
+          gate,
+          stepScreenX
+        )
         : null;
 
     /*
@@ -371,22 +371,22 @@ function PinholeOpticsLearn({ onOpen3D }) {
 
     const exitXTop =
       clearsAboveWall &&
-      Math.abs(slope) >
+        Math.abs(slope) >
         1e-9
         ? gate.x +
-          (0 -
-            gate.y) /
-            slope
+        (0 -
+          gate.y) /
+        slope
         : null;
 
     const exitXBottom =
       clearsBelowWall &&
-      Math.abs(slope) >
+        Math.abs(slope) >
         1e-9
         ? gate.x +
-          (VB_H -
-            gate.y) /
-            slope
+        (VB_H -
+          gate.y) /
+        slope
         : null;
 
     return {
@@ -412,8 +412,8 @@ function PinholeOpticsLearn({ onOpen3D }) {
       const y =
         source.y +
         alpha *
-          (ray.gate.y -
-            source.y);
+        (ray.gate.y -
+          source.y);
 
       return {
         x,
@@ -1098,7 +1098,7 @@ function PinholeOpticsLearn({ onOpen3D }) {
                       {...dragProps((p) => {
                         const handle =
                           rayHandlePositions[
-                            i
+                          i
                           ];
 
                         /*
@@ -1111,14 +1111,14 @@ function PinholeOpticsLearn({ onOpen3D }) {
                           source.y +
                           (p.y -
                             source.y) /
-                            handle.alpha;
+                          handle.alpha;
 
                         const y =
                           clamp(
                             gateY,
                             -180,
                             VB_H +
-                              180
+                            180
                           );
 
                         setGates(
@@ -1129,7 +1129,7 @@ function PinholeOpticsLearn({ onOpen3D }) {
                                 idx
                               ) =>
                                 idx ===
-                                i
+                                  i
                                   ? y
                                   : v
                             )
@@ -1439,77 +1439,77 @@ function PinholeOpticsLearn({ onOpen3D }) {
 
 
         <div className="pol-explanation-zone">
-        {step === 0 && (
-          <>
-            <div className="pol-mode-toggle">
-              <button
-                type="button"
-                className="pol-mode-btn"
-                data-active={!coneMode}
-                aria-pressed={!coneMode}
-                onClick={() => setConeMode(false)}
-              >
-                THREE RAYS
-              </button>
-              <button
-                type="button"
-                className="pol-mode-btn"
-                data-active={coneMode}
-                aria-pressed={coneMode}
-                onClick={() => setConeMode(true)}
-              >
-                CONE OF LIGHT
-              </button>
-            </div>
+          {step === 0 && (
+            <>
+              <div className="pol-mode-toggle">
+                <button
+                  type="button"
+                  className="pol-mode-btn"
+                  data-active={!coneMode}
+                  aria-pressed={!coneMode}
+                  onClick={() => setConeMode(false)}
+                >
+                  THREE RAYS
+                </button>
+                <button
+                  type="button"
+                  className="pol-mode-btn"
+                  data-active={coneMode}
+                  aria-pressed={coneMode}
+                  onClick={() => setConeMode(true)}
+                >
+                  CONE OF LIGHT
+                </button>
+              </div>
+              <div className="pol-explanation-copy">
+                {coneMode ? (
+                  <p className="pol-instructions">
+                    Every point on the sunflower throws light in every direction – shown
+                    here as a wide 120° cone. Drag the <strong>coloured handle</strong> to
+                    examine the light coming from any point on the sunflower – flower,
+                    stem or pot. Most of that light hits the solid wall and stops there.
+                    Light aimed above or below the wall keeps travelling, while the narrow
+                    sliver lined up with the opening passes through the pinhole and spreads
+                    back out toward the screen.
+                  </p>
+                ) : (
+                  <p className="pol-instructions">
+                    Every point on the sunflower throws light in every direction. Drag
+                    the <strong>coloured handle</strong> to examine the light coming from
+                    any point on the sunflower – flower, stem or pot. Then drag the{" "}
+                    <strong>three rays</strong> to aim them at different points on the wall.
+                    Line one up with the opening and its ray sails straight through to
+                    the screen, coloured according to the point it came from. Miss the
+                    opening and the ray simply stops – blocked by the wall.
+                  </p>
+                )}
+              </div>
+            </>
+          )}
+
+          {step === 1 && (
             <div className="pol-explanation-copy">
-              {coneMode ? (
-                <p className="pol-instructions">
-                  Every point on the sunflower throws light in every direction – shown
-                  here as a wide 120° cone. Drag the <strong>coloured handle</strong> to
-                  examine the light coming from any point on the sunflower – flower,
-                  stem or pot. Most of that light hits the solid wall and stops there.
-                  Light aimed above or below the wall keeps travelling, while the narrow
-                  sliver lined up with the opening passes through the pinhole and spreads
-                  back out toward the screen.
-                </p>
-              ) : (
-                <p className="pol-instructions">
-                  Every point on the sunflower throws light in every direction. Drag
-                  the <strong>coloured handle</strong> to examine the light coming from
-                  any point on the sunflower – flower, stem or pot. Then drag the{" "}
-                  <strong>three rays</strong> to aim them at different points on the wall.
-                  Line one up with the opening and its ray sails straight through to
-                  the screen, coloured according to the point it came from. Miss the
-                  opening and the ray simply stops – blocked by the wall.
-                </p>
-              )}
+              <p className="pol-instructions">
+                Ten points run evenly from flower to pot, each firing its own
+                fan of rays, coloured to match. Drag the <strong>handle above the hole</strong>{" "}
+                to widen or narrow the opening. A wide hole lets a broad fan
+                through from every point – they land as overlapping smears, not
+                points. Shrink it down and watch all ten pull into sharp, separate
+                dots.
+              </p>
             </div>
-          </>
-        )}
+          )}
 
-        {step === 1 && (
-          <div className="pol-explanation-copy">
-            <p className="pol-instructions">
-              Ten points run evenly from flower to pot, each firing its own
-              fan of rays, coloured to match. Drag the <strong>handle above the hole</strong>{" "}
-              to widen or narrow the opening. A wide hole lets a broad fan
-              through from every point – they land as overlapping smears, not
-              points. Shrink it down and watch all ten pull into sharp, separate
-              dots.
-            </p>
-          </div>
-        )}
-
-        {step === 2 && (
-          <div className="pol-explanation-copy">
-            <p className="pol-instructions">
-              With the hole pinned small, only one ray per point gets through –
-              so the sunflower's tip and base each land as a crisp point, flipped
-              top-to-bottom. Drag the <strong>screen</strong> back and forth to
-              see the image grow and shrink.
-            </p>
-          </div>
-        )}
+          {step === 2 && (
+            <div className="pol-explanation-copy">
+              <p className="pol-instructions">
+                With the hole pinned small, only one ray per point gets through –
+                so the sunflower's tip and base each land as a crisp point, flipped
+                top-to-bottom. Drag the <strong>screen</strong> back and forth to
+                see the image grow and shrink.
+              </p>
+            </div>
+          )}
 
         </div>
 
@@ -1670,7 +1670,7 @@ function Petal({ angle }) {
         0.72,
         0.11,
       ]}
-    
+
       castShadow
     >
       <sphereGeometry
@@ -1714,9 +1714,9 @@ function RearBract({ angle }) {
           0.58,
           0.10,
         ]}
-      
-      castShadow
-    >
+
+        castShadow
+      >
         <sphereGeometry
           args={[1, 16, 10]}
         />
@@ -1878,9 +1878,9 @@ function Leaf({
     >
       <mesh
         geometry={geometry}
-      
-      castShadow
-    >
+
+        castShadow
+      >
         <meshStandardMaterial
           color={LEAF_COLOR}
           roughness={0.9}
@@ -1890,9 +1890,9 @@ function Leaf({
 
       <mesh
         geometry={veinGeometry}
-      
-      castShadow
-    >
+
+        castShadow
+      >
         <meshStandardMaterial
           color={LEAF_COLOR}
           roughness={0.9}
@@ -1919,7 +1919,7 @@ function Seed({
         0.052,
         0.014,
       ]}
-    
+
       castShadow
     >
       <sphereGeometry
@@ -1962,7 +1962,7 @@ function SeedHead() {
       maxRadius *
       Math.sqrt(
         (i + 0.5) /
-          seedCount
+        seedCount
       );
 
     const angle =
@@ -1979,9 +1979,9 @@ function SeedHead() {
     const surfaceFactor =
       1 -
       (x * x) /
-        (radiusX * radiusX) -
+      (radiusX * radiusX) -
       (y * y) /
-        (radiusY * radiusY);
+      (radiusY * radiusY);
 
     const z =
       radiusZ *
@@ -2000,11 +2000,11 @@ function SeedHead() {
     const normal =
       new THREE.Vector3(
         x /
-          (radiusX * radiusX),
+        (radiusX * radiusX),
         y /
-          (radiusY * radiusY),
+        (radiusY * radiusY),
         z /
-          (radiusZ * radiusZ)
+        (radiusZ * radiusZ)
       ).normalize();
 
     const tangent =
@@ -2096,9 +2096,9 @@ function Sunflower({
           1.65,
           0,
         ]}
-      
-      castShadow
-    >
+
+        castShadow
+      >
         <cylinderGeometry
           args={[
             0.075,
@@ -2166,9 +2166,9 @@ function Sunflower({
             0,
             0,
           ]}
-        
-      castShadow
-    >
+
+          castShadow
+        >
           <cylinderGeometry
             args={[
               0.085,
@@ -2207,9 +2207,9 @@ function Sunflower({
             0.66,
             0.32,
           ]}
-        
-      castShadow
-    >
+
+          castShadow
+        >
           <sphereGeometry
             args={[1, 32, 20]}
           />
@@ -2324,9 +2324,9 @@ function Sunflower({
             0.43,
             0.18,
           ]}
-        
-      castShadow
-    >
+
+          castShadow
+        >
           <sphereGeometry
             args={[1, 32, 20]}
           />
@@ -2391,9 +2391,9 @@ function Pot({ potRef }) {
 
       <mesh
         geometry={potGeometry}
-      
-      castShadow
-    >
+
+        castShadow
+      >
         <meshStandardMaterial
           color={POT_COLOR}
           roughness={0.9}
@@ -2433,9 +2433,9 @@ function Pot({ potRef }) {
           0.68,
           0,
         ]}
-      
-      castShadow
-    >
+
+        castShadow
+      >
         <cylinderGeometry
           args={[
             0.55,
@@ -2464,9 +2464,9 @@ function Pot({ potRef }) {
           0.10,
           0.53,
         ]}
-      
-      castShadow
-    >
+
+        castShadow
+      >
         <sphereGeometry
           args={[1, 32, 8]}
         />
@@ -2581,7 +2581,7 @@ function RayCylinderSegment({
     const drawingHeight =
       Math.max(
         size.height *
-          pixelRatio,
+        pixelRatio,
         1
       );
 
@@ -2632,7 +2632,7 @@ function RayCylinderSegment({
       const visibleWorldHeight =
         Math.abs(
           camera.top -
-            camera.bottom
+          camera.bottom
         ) /
         Math.max(
           camera.zoom,
@@ -2648,7 +2648,7 @@ function RayCylinderSegment({
       Math.max(
         (pixelWidth *
           worldPerPixel) /
-          2,
+        2,
         0.00005
       );
 
@@ -2847,7 +2847,7 @@ function RayLines({ rays }) {
     const sparseT =
       THREE.MathUtils.clamp(
         (rayCount - 10) /
-          (40 - 10),
+        (40 - 10),
         0,
         1
       );
@@ -2862,7 +2862,7 @@ function RayLines({ rays }) {
     const denseT =
       THREE.MathUtils.clamp(
         (rayCount - 40) /
-          (80 - 40),
+        (80 - 40),
         0,
         1
       );
@@ -2888,7 +2888,7 @@ function RayLines({ rays }) {
   const opacityBlend =
     THREE.MathUtils.clamp(
       (rayCount - 40) /
-        (80 - 40),
+      (80 - 40),
       0,
       1
     );
@@ -2965,8 +2965,8 @@ function RayArrows({ rays }) {
     );
 
   /*
-     Make all arrowheads a little larger than before, then
-     progressively enlarge them further as the ray count drops.
+     Arrowheads scale up as the ray count drops so direction remains
+     legible without overwhelming denser ray fields.
 
      Approximate scale multiplier:
        10 rays  -> 1.80x
@@ -2978,7 +2978,7 @@ function RayArrows({ rays }) {
   const normalized =
     THREE.MathUtils.clamp(
       (rayCount - 10) /
-        (200 - 10),
+      (200 - 10),
       0,
       1
     );
@@ -3001,114 +3001,114 @@ function RayArrows({ rays }) {
           100
         )
         .map(
-        (ray, i) => {
-          const direction =
-            new THREE.Vector3()
-              .subVectors(
-                ray.pinhole,
-                ray.origin
-              )
-              .normalize();
+          (ray, i) => {
+            const direction =
+              new THREE.Vector3()
+                .subVectors(
+                  ray.pinhole,
+                  ray.origin
+                )
+                .normalize();
 
-          /*
-             Place the direction marker a fixed distance from the
-             sunflower end of the ray instead of at a percentage of
-             the object→pinhole span. This makes its location visually
-             stable when object distance or camera framing changes.
-          */
-          const originToPinhole =
-            ray.origin.distanceTo(
-              ray.pinhole
-            );
+            /*
+               Place the direction marker a fixed distance from the
+               sunflower end of the ray instead of at a percentage of
+               the object→pinhole span. This makes its location visually
+               stable when object distance or camera framing changes.
+            */
+            const originToPinhole =
+              ray.origin.distanceTo(
+                ray.pinhole
+              );
 
-          const baseArrowDistance =
-            Math.min(
-              1.85,
-              originToPinhole * 0.42
-            );
+            const baseArrowDistance =
+              Math.min(
+                1.85,
+                originToPinhole * 0.42
+              );
 
-          /*
-             Centre rays sit a touch further back toward the sunflower
-             than the others. Use the ray's semantic source category
-             rather than inferring its identity from display colours.
-          */
-          const isCentreRay =
-            ray.category ===
+            /*
+               Centre rays sit a touch further back toward the sunflower
+               than the others. Use the ray's semantic source category
+               rather than inferring its identity from display colours.
+            */
+            const isCentreRay =
+              ray.category ===
               "centre";
 
-          const arrowDistanceFromObject =
-            isCentreRay
-              ? Math.min(
+            const arrowDistanceFromObject =
+              isCentreRay
+                ? Math.min(
                   1.55,
                   originToPinhole *
-                    0.34
+                  0.34
                 )
-              : baseArrowDistance;
+                : baseArrowDistance;
 
-          const position =
-            ray.origin
-              .clone()
-              .add(
-                direction
-                  .clone()
-                  .multiplyScalar(
-                    arrowDistanceFromObject
-                  )
-              );
-
-          const quaternion =
-            new THREE.Quaternion()
-              .setFromUnitVectors(
-                new THREE.Vector3(
-                  0,
-                  1,
-                  0
-                ),
-                direction
-              );
-
-          return (
-            <mesh
-              key={i}
-              position={
-                position
-              }
-              quaternion={
-                quaternion
-              }
-              scale={[
-                0.055 *
-                  arrowScaleMultiplier,
-                0.145 *
-                  arrowScaleMultiplier,
-                0.055 *
-                  arrowScaleMultiplier,
-              ]}
-              onUpdate={(
-                object
-              ) => {
-                object.layers.set(
-                  RAY_LAYER
+            const position =
+              ray.origin
+                .clone()
+                .add(
+                  direction
+                    .clone()
+                    .multiplyScalar(
+                      arrowDistanceFromObject
+                    )
                 );
-              }}
-            >
-              <coneGeometry
-                args={[
-                  0.6,
-                  1,
-                  6,
-                ]}
-              />
 
-              <meshBasicMaterial
-                color={
-                  ray.color
+            const quaternion =
+              new THREE.Quaternion()
+                .setFromUnitVectors(
+                  new THREE.Vector3(
+                    0,
+                    1,
+                    0
+                  ),
+                  direction
+                );
+
+            return (
+              <mesh
+                key={i}
+                position={
+                  position
                 }
-              />
-            </mesh>
-          );
-        }
-      )}
+                quaternion={
+                  quaternion
+                }
+                scale={[
+                  0.055 *
+                  arrowScaleMultiplier,
+                  0.145 *
+                  arrowScaleMultiplier,
+                  0.055 *
+                  arrowScaleMultiplier,
+                ]}
+                onUpdate={(
+                  object
+                ) => {
+                  object.layers.set(
+                    RAY_LAYER
+                  );
+                }}
+              >
+                <coneGeometry
+                  args={[
+                    0.6,
+                    1,
+                    6,
+                  ]}
+                />
+
+                <meshBasicMaterial
+                  color={
+                    ray.color
+                  }
+                />
+              </mesh>
+            );
+          }
+        )}
     </>
   );
 }
@@ -3168,11 +3168,11 @@ function sampleAperturePoint(
   return new THREE.Vector3(
     pinhole.x,
     pinhole.y +
-      Math.cos(angle) *
-        radius,
+    Math.cos(angle) *
+    radius,
     pinhole.z +
-      Math.sin(angle) *
-        radius
+    Math.sin(angle) *
+    radius
   );
 }
 
@@ -3193,14 +3193,14 @@ function createPetalSample(
   const u =
     halton(
       sampleIndex +
-        petalIndex * 1000,
+      petalIndex * 1000,
       2
     );
 
   const v =
     halton(
       sampleIndex +
-        petalIndex * 1000,
+      petalIndex * 1000,
       3
     );
 
@@ -3217,7 +3217,7 @@ function createPetalSample(
     innerRadius +
     (outerRadius -
       innerRadius) *
-      radial;
+    radial;
 
   const theta =
     Math.PI * 2 * u;
@@ -3233,8 +3233,8 @@ function createPetalSample(
       Math.max(
         0,
         1 -
-          localX * localX -
-          localY * localY
+        localX * localX -
+        localY * localY
       )
     );
 
@@ -3248,20 +3248,20 @@ function createPetalSample(
   point.applyEuler(
     new THREE.Euler(
       Math.sin(angle) *
-        0.30,
+      0.30,
       -Math.cos(angle) *
-        0.30,
+      0.30,
       angle -
-        Math.PI / 2
+      Math.PI / 2
     )
   );
 
   point.add(
     new THREE.Vector3(
       Math.cos(angle) *
-        PETAL_ROOT_RADIUS,
+      PETAL_ROOT_RADIUS,
       Math.sin(angle) *
-        PETAL_ROOT_RADIUS,
+      PETAL_ROOT_RADIUS,
       0.30
     )
   );
@@ -3309,8 +3309,8 @@ function createFlowerCentreSample(
     x,
     FLOWER_POSITION.y + y,
     FLOWER_POSITION.z +
-      0.38 +
-      z
+    0.38 +
+    z
   );
 }
 
@@ -3352,9 +3352,9 @@ function createLeafSample(
     0.045 +
     u * 0.20 +
     0.025 *
-      Math.sin(
-        Math.PI * u
-      );
+    Math.sin(
+      Math.PI * u
+    );
 
   const c =
     Math.cos(
@@ -3465,7 +3465,7 @@ function createSurfaceCandidates() {
         PETAL_COLOR,
         halton(
           i +
-            petal * 1000,
+          petal * 1000,
           5
         )
       );
@@ -3530,7 +3530,7 @@ function createSurfaceCandidates() {
         LEAF_COLOR,
         halton(
           i +
-            leaf.offset,
+          leaf.offset,
           5
         )
       );
@@ -3565,10 +3565,10 @@ function createSurfaceCandidates() {
       "stem",
       new THREE.Vector3(
         Math.cos(angle) *
-          radius,
+        radius,
         y,
         Math.sin(angle) *
-          radius
+        radius
       ),
       STEM_COLOR,
       halton(i, 5)
@@ -3603,10 +3603,10 @@ function createSurfaceCandidates() {
       "stem",
       new THREE.Vector3(
         Math.cos(angle) *
-          radius,
+        radius,
         3.90 +
-          Math.sin(angle) *
-            radius,
+        Math.sin(angle) *
+        radius,
         z
       ),
       STEM_COLOR,
@@ -3642,10 +3642,10 @@ function createSurfaceCandidates() {
       "pot",
       new THREE.Vector3(
         Math.cos(angle) *
-          radius,
+        radius,
         y,
         Math.sin(angle) *
-          radius
+        radius
       ),
       POT_COLOR,
       halton(i, 5)
@@ -3737,11 +3737,11 @@ function interleaveRays(
 
     result.push(
       categoryRays[
-        bestCategory
+      bestCategory
       ][
-        indices[
-          bestCategory
-        ]
+      indices[
+      bestCategory
+      ]
       ]
     );
 
@@ -3923,7 +3923,7 @@ function useVisibleRays({
           ) {
             const candidates =
               categories[
-                category
+              category
               ];
 
             const object =
@@ -3936,19 +3936,19 @@ function useVisibleRays({
             const target =
               Math.ceil(
                 maxRays *
-                  targetWeights[
-                    category
-                  ]
+                targetWeights[
+                category
+                ]
               );
 
             for (
               let i = 0;
               i <
-                candidates.length &&
+              candidates.length &&
               accepted[
                 category
               ].length <
-                target;
+              target;
               i++
             ) {
               const candidate =
@@ -3962,9 +3962,8 @@ function useVisibleRays({
                   );
 
               /*
-                 Each visible ray now uses a different point
-                 across the finite circular aperture instead
-                 of being forced through the exact centre.
+                 Each visible ray samples a point across the finite
+                 circular aperture rather than sharing its exact centre.
               */
 
               const aperturePoint =
@@ -3972,9 +3971,9 @@ function useVisibleRays({
                   pinhole,
                   apertureRadius,
                   i +
-                    apertureOffsets[
-                      category
-                    ]
+                  apertureOffsets[
+                  category
+                  ]
                 );
 
               const toAperture =
@@ -4022,13 +4021,13 @@ function useVisibleRays({
 
               for (
                 const hit of
-                  intersections
+                intersections
               ) {
                 if (
                   hit.distance >
-                    0.008 &&
+                  0.008 &&
                   hit.distance <
-                    distance - 0.008
+                  distance - 0.008
                 ) {
                   blocked = true;
                   break;
@@ -4059,17 +4058,15 @@ function useVisibleRays({
                   worldPoint.clone(),
 
                 /*
-                   Keep the existing property name so RayLines
-                   and RayArrows continue to work unchanged.
-                   It now stores the sampled aperture point.
+                   RayLines and RayArrows use `pinhole` as the sampled
+                   aperture point for this ray.
                 */
                 pinhole:
                   aperturePoint.clone(),
 
                 /*
-                   The existing `screen` field is used as the
-                   visible end point. It may now lie on the
-                   screen, floor, or ceiling.
+                   `screen` is the ray's visible endpoint and may lie
+                   on the screen, floor, or ceiling.
                 */
                 screen:
                   rayEnd.point,
@@ -4213,11 +4210,11 @@ function createLightConeGeometry({
       new THREE.Vector3(
         pinhole.x,
         pinhole.y +
-          Math.cos(angle) *
-            apertureRadius,
+        Math.cos(angle) *
+        apertureRadius,
         pinhole.z +
-          Math.sin(angle) *
-            apertureRadius
+        Math.sin(angle) *
+        apertureRadius
       );
 
     const direction =
@@ -4584,7 +4581,11 @@ function SunflowerLightCones({
               pinholeDiameter={
                 pinholeDiameter
               }
-              opacity={0.4}
+              opacity={
+                category === "petal"
+                  ? 0.4
+                  : 0.32
+              }
             />
 
             <ConeOriginMarker
@@ -4758,7 +4759,7 @@ function PinholeWall({
       hole.absarc(
         0,
         holeY -
-          wallHeight / 2,
+        wallHeight / 2,
         holeRadius,
         0,
         Math.PI * 2,
@@ -4822,8 +4823,8 @@ function PinholeWall({
       */
       geometry.translate(
         x +
-          wallDepth +
-          0.0006,
+        wallDepth +
+        0.0006,
         wallHeight / 2,
         0
       );
@@ -5341,7 +5342,7 @@ function ProjectionRenderer({
       (
         1 +
         screenDistance /
-          safeObjectDistance
+        safeObjectDistance
       );
 
     /*
@@ -5532,11 +5533,9 @@ function ProjectionChamber({
     (sideWallStartX + sideWallEndX) / 2;
 
   /*
-     Keep only the FAR side wall visible.
-
-     IMPORTANT: React no longer owns the `visible` property on these
-     two walls. Visibility is controlled imperatively here only, so a
-     slider/state re-render cannot briefly restore an old JSX value.
+     Keep only the far side wall visible. Camera-dependent wall
+     visibility is controlled imperatively so React re-renders cannot
+     overwrite it with a stale JSX value.
   */
 
   const updateChamberVisibility = () => {
@@ -5589,14 +5588,14 @@ function ProjectionChamber({
       if (
         ceilingGroupRef.current.visible &&
         angleFromStraightDown <
-          hideThreshold
+        hideThreshold
       ) {
         ceilingGroupRef.current.visible =
           false;
       } else if (
         !ceilingGroupRef.current.visible &&
         angleFromStraightDown >
-          showThreshold
+        showThreshold
       ) {
         ceilingGroupRef.current.visible =
           true;
@@ -5635,7 +5634,7 @@ function ProjectionChamber({
           position={[
             centreX,
             chamberHeight +
-              slabThickness / 2,
+            slabThickness / 2,
             0,
           ]}
           size={[
@@ -5652,7 +5651,7 @@ function ProjectionChamber({
           position={[
             centreX,
             chamberHeight -
-              0.0006,
+            0.0006,
             0,
           ]}
           rotation={[
@@ -5689,7 +5688,7 @@ function ProjectionChamber({
           sideWallCentreX,
           chamberHeight / 2,
           chamberWidth / 2 -
-            slabThickness / 2,
+          slabThickness / 2,
         ]}
         size={[
           sideWallLength,
@@ -5704,7 +5703,7 @@ function ProjectionChamber({
           sideWallCentreX,
           chamberHeight / 2,
           -chamberWidth / 2 +
-            slabThickness / 2,
+          slabThickness / 2,
         ]}
         size={[
           sideWallLength,
@@ -6200,7 +6199,7 @@ function CameraPresetController({
       preset !== "object" ||
       !controlsRef.current ||
       Math.abs(deltaX) <
-        1e-9
+      1e-9
     ) {
       return;
     }
@@ -6274,7 +6273,7 @@ function CameraPresetController({
         Math.min(
           1,
           transition.progress +
-            delta * 2.25
+          delta * 2.25
         );
 
       const t =
@@ -6475,8 +6474,8 @@ function PinholeGuideTracker({
     const objectY =
       camera.position.y +
       t *
-        (pinholeY -
-          camera.position.y);
+      (pinholeY -
+        camera.position.y);
 
     const verticalDifference =
       objectY -
@@ -6537,7 +6536,7 @@ function PinholeViewInset({
     (worldY) =>
       80 -
       (worldY + 0.72) *
-        12.5;
+      12.5;
 
   const objectX = 24;
   const pinholeX = 101;
@@ -6567,8 +6566,8 @@ function PinholeViewInset({
   const observerSvgY =
     pinholeSvgY +
     lineSlope *
-      (observerX -
-        pinholeX);
+    (observerX -
+      pinholeX);
 
   /*
      Stop the red sightline just short of the eye centre so the
@@ -6594,12 +6593,12 @@ function PinholeViewInset({
   const lineEndX =
     observerX -
     (eyeDx / eyeLength) *
-      eyeSideTrim;
+    eyeSideTrim;
 
   const lineEndY =
     observerSvgY -
     (eyeDy / eyeLength) *
-      eyeSideTrim;
+    eyeSideTrim;
 
   return (
     <div
@@ -6793,11 +6792,11 @@ function PinholeViewInset({
           transform={`
             translate(${observerX} ${observerSvgY})
             rotate(${Math.atan2(
-              observerSvgY -
-                pinholeSvgY,
-              observerX -
-                pinholeX
-            ) * (180 / Math.PI)})
+            observerSvgY -
+            pinholeSvgY,
+            observerX -
+            pinholeX
+          ) * (180 / Math.PI)})
             scale(-0.48 0.48)
           `}
         >
@@ -6995,7 +6994,7 @@ function SceneWithRays({
   const isIdealPinhole =
     pinholeDiameter <=
     IDEAL_PINHOLE_SLIDER_VALUE +
-      0.000001;
+    0.000001;
 
   /*
      The special final slider notch represents an ideal pinhole:
@@ -7109,10 +7108,8 @@ function SceneWithRays({
       {/* =================================================
           OPTICAL VISUALISATION MODE
 
-          Rays mode keeps the existing ray renderer unchanged.
-
-          Light-cones mode is wired to the same plant, aperture,
-          object-distance and screen data. Cone geometry comes next.
+          Rays and light cones share the same plant, aperture,
+          object-distance and screen geometry.
       ================================================= */}
 
       {viewMode === "rays" && (
@@ -7469,116 +7466,116 @@ function Pinhole3DLab() {
           }}
         >
           {[
-          [
-            "side",
-            "Side",
-            "Side-on view of object, aperture and screen",
-          ],
-          [
-            "optics",
-            "Optics",
-            "Angled overview centred near the pinhole",
-          ],
-          [
-            "object",
-            "Object",
-            "View toward the sunflower and incoming light",
-          ],
-          [
-            "screen",
-            "Screen",
-            "View into the chamber toward the projected image",
-          ],
-          [
-            "pinhole",
-            "Pinhole",
-            "Look straight through the pinhole toward the object",
-          ],
-        ].map(
-          ([
-            mode,
-            label,
-            title,
-          ]) => {
-            const selected =
-              cameraPreset ===
-              mode;
+            [
+              "side",
+              "Side",
+              "Side-on view of object, aperture and screen",
+            ],
+            [
+              "optics",
+              "Optics",
+              "Angled overview centred near the pinhole",
+            ],
+            [
+              "object",
+              "Object",
+              "View toward the sunflower and incoming light",
+            ],
+            [
+              "screen",
+              "Screen",
+              "View into the chamber toward the projected image",
+            ],
+            [
+              "pinhole",
+              "Pinhole",
+              "Look straight through the pinhole toward the object",
+            ],
+          ].map(
+            ([
+              mode,
+              label,
+              title,
+            ]) => {
+              const selected =
+                cameraPreset ===
+                mode;
 
-            return (
-              <button
-                key={mode}
-                type="button"
-                title={title}
-                aria-pressed={selected}
-                onClick={() => {
-                  setCameraPreset(
-                    mode
-                  );
-
-                  if (
-                    mode ===
-                    "pinhole"
-                  ) {
-                    setViewMode(
-                      "image"
+              return (
+                <button
+                  key={mode}
+                  type="button"
+                  title={title}
+                  aria-pressed={selected}
+                  onClick={() => {
+                    setCameraPreset(
+                      mode
                     );
-                  }
-                }}
-                style={{
-                  padding:
-                    "2px 6px",
-                  borderRadius:
-                    "6px",
-                  border:
-                    selected
-                      ? "1px solid #50483e"
-                      : "1px solid #c6beb1",
-                  background:
-                    selected
-                      ? "linear-gradient(180deg, #f5b47a 0%, #f29b66 100%)"
-                      : "#fffdf8",
-                  color:
-                    selected
-                      ? "#243746"
-                      : "#4d6478",
-                  fontFamily:
-                    "'IBM Plex Mono', monospace",
-                  fontSize:
-                    "8.8px",
-                  fontWeight: 500,
-                  letterSpacing:
-                    "0.055em",
-                  textTransform:
-                    "uppercase",
-                  whiteSpace:
-                    "nowrap",
-                  cursor:
-                    "pointer",
-                  boxShadow:
-                    selected
-                      ? "0 1px 3px rgba(0,0,0,0.18)"
-                      : "0 1px 2px rgba(0,0,0,0.06)",
-                }}
-              >
-                {label}
-              </button>
-            );
-          }
-        )}
+
+                    if (
+                      mode ===
+                      "pinhole"
+                    ) {
+                      setViewMode(
+                        "image"
+                      );
+                    }
+                  }}
+                  style={{
+                    padding:
+                      "2px 6px",
+                    borderRadius:
+                      "6px",
+                    border:
+                      selected
+                        ? "1px solid #50483e"
+                        : "1px solid #c6beb1",
+                    background:
+                      selected
+                        ? "linear-gradient(180deg, #f5b47a 0%, #f29b66 100%)"
+                        : "#fffdf8",
+                    color:
+                      selected
+                        ? "#243746"
+                        : "#4d6478",
+                    fontFamily:
+                      "'IBM Plex Mono', monospace",
+                    fontSize:
+                      "8.8px",
+                    fontWeight: 500,
+                    letterSpacing:
+                      "0.055em",
+                    textTransform:
+                      "uppercase",
+                    whiteSpace:
+                      "nowrap",
+                    cursor:
+                      "pointer",
+                    boxShadow:
+                      selected
+                        ? "0 1px 3px rgba(0,0,0,0.18)"
+                        : "0 1px 2px rgba(0,0,0,0.06)",
+                  }}
+                >
+                  {label}
+                </button>
+              );
+            }
+          )}
         </div>
       </div>
 
       {cameraPreset ===
         "pinhole" && (
-        <PinholeViewInset
-          objectY={
-            pinholeGuide.objectY
-          }
-          label={
-            pinholeGuide.label
-          }
-        />
-      )}
+          <PinholeViewInset
+            objectY={
+              pinholeGuide.objectY
+            }
+            label={
+              pinholeGuide.label
+            }
+          />
+        )}
 
       {/* =================================================
           COMPACT CONTROLS
@@ -7631,8 +7628,8 @@ function Pinhole3DLab() {
                   if (
                     mode === "cones" &&
                     pinholeDiameter <=
-                      IDEAL_PINHOLE_SLIDER_VALUE +
-                        0.000001
+                    IDEAL_PINHOLE_SLIDER_VALUE +
+                    0.000001
                   ) {
                     setPinholeDiameter(
                       0.15
@@ -7736,7 +7733,7 @@ function Pinhole3DLab() {
             style={{
               fontSize:
                 pinholeDiameter <=
-                IDEAL_PINHOLE_SLIDER_VALUE +
+                  IDEAL_PINHOLE_SLIDER_VALUE +
                   0.000001
                   ? "8px"
                   : "inherit",
@@ -7745,12 +7742,12 @@ function Pinhole3DLab() {
             }}
           >
             {pinholeDiameter <=
-            IDEAL_PINHOLE_SLIDER_VALUE +
+              IDEAL_PINHOLE_SLIDER_VALUE +
               0.000001
               ? "Ideal pinhole"
               : pinholeDiameter.toFixed(
-                  2
-                )}
+                2
+              )}
           </strong>
         </div>
 
@@ -7759,7 +7756,7 @@ function Pinhole3DLab() {
           aria-label="Pinhole diameter"
           aria-valuetext={
             pinholeDiameter <=
-            IDEAL_PINHOLE_SLIDER_VALUE +
+              IDEAL_PINHOLE_SLIDER_VALUE +
               0.000001
               ? "Ideal pinhole"
               : `${pinholeDiameter.toFixed(2)} world units`
@@ -7783,7 +7780,9 @@ function Pinhole3DLab() {
             height: "10px",
             margin: "0 0 5px 0",
           }}
-        />        {/* NUMBER OF RAYS */}
+        />
+
+        {/* NUMBER OF RAYS */}
 
         <div
           style={{
