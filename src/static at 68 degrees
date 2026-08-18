@@ -1,0 +1,847 @@
+
+import React from "react";
+
+export default function Sunflower() {
+  // Fixed visual values corresponding to 68°.
+  const sideAmount = 0.85;
+  const lean = -6.12;
+  const scaleX = 0.3746065934;
+  const direction = 0.9985004894;
+  const headTravel = 142.536945;
+
+  // =========================================================
+  // STEM / L-SHAPED NECK
+  // =========================================================
+
+  const stemTopY = 207;
+
+  const neckBaseX = 200;
+  const neckBaseY = stemTopY;
+
+  const neckEndX = neckBaseX + headTravel;
+
+  const neckTopY = 250;
+
+  // =========================================================
+  // FLOWER POSITION
+  // =========================================================
+
+  const flowerCenterX = neckEndX;
+  const flowerCenterY = 200;
+
+  // =========================================================
+  // PETALS
+  // =========================================================
+
+  const petals = Array.from({ length: 20 }, (_, i) => {
+    const angle = i * 18;
+
+    return (
+      <ellipse
+        key={i}
+        cx={flowerCenterX}
+        cy={115}
+        rx="22"
+        ry="75"
+        transform={`
+          rotate(
+            ${angle}
+            ${flowerCenterX}
+            ${flowerCenterY}
+          )
+        `}
+        fill="url(#petalGradient)"
+        stroke="#D99A16"
+        strokeWidth="3"
+      />
+    );
+  });
+
+  // =========================================================
+  // SEEDS
+  // =========================================================
+
+  const seeds = Array.from({ length: 90 }, (_, i) => {
+    const angle = i * 137.5;
+    const radius = Math.sqrt(i) * 7;
+
+    const x =
+      flowerCenterX +
+      radius * Math.cos((angle * Math.PI) / 180);
+
+    const y =
+      flowerCenterY +
+      radius * Math.sin((angle * Math.PI) / 180);
+
+    return (
+      <circle
+        key={i}
+        cx={x}
+        cy={y}
+        r="3"
+        fill="#5C2F0B"
+        opacity={0.75 + (i % 4) * 0.06}
+      />
+    );
+  });
+
+  // =========================================================
+  // POT GEOMETRY
+  // =========================================================
+
+  const potLeft = 125;
+  const potRight = 275;
+  const potWidth = potRight - potLeft;
+
+  // =========================================================
+  // SEVEN CONTINUOUS WARP ZONES
+  // =========================================================
+
+  const zoneScales = [
+    0.20,
+    0.40,
+    0.70,
+    1.00,
+    0.70,
+    0.40,
+    0.20,
+  ];
+
+  const zoneWidth = potWidth / zoneScales.length;
+
+  const sourceBoundaries = [0];
+
+  zoneScales.forEach((scale) => {
+    sourceBoundaries.push(
+      sourceBoundaries[sourceBoundaries.length - 1] +
+        zoneWidth * scale
+    );
+  });
+
+  const totalSourceWidth =
+    sourceBoundaries[sourceBoundaries.length - 1];
+
+  // Fixed pattern position.
+  const patternOffset = 0;
+
+  // =========================================================
+  // CONTINUOUS X WARP
+  // =========================================================
+
+  function warpX(sourceX) {
+    for (let i = 0; i < zoneScales.length; i++) {
+      const sourceStart = sourceBoundaries[i];
+      const sourceEnd = sourceBoundaries[i + 1];
+
+      if (
+        sourceX >= sourceStart &&
+        sourceX <= sourceEnd
+      ) {
+        const localSource =
+          sourceX - sourceStart;
+
+        const localPhysical =
+          localSource / zoneScales[i];
+
+        return (
+          potLeft +
+          i * zoneWidth +
+          localPhysical
+        );
+      }
+    }
+
+    // Extrapolate smoothly beyond the left edge.
+    if (sourceX < sourceBoundaries[0]) {
+      return (
+        potLeft +
+        (sourceX - sourceBoundaries[0]) /
+          zoneScales[0]
+      );
+    }
+
+    // Extrapolate smoothly beyond the right edge.
+    const lastIndex =
+      zoneScales.length - 1;
+
+    return (
+      potRight +
+      (sourceX -
+        sourceBoundaries[
+          sourceBoundaries.length - 1
+        ]) /
+        zoneScales[lastIndex]
+    );
+  }
+
+  // =========================================================
+  // BEZIER HELPERS
+  // =========================================================
+
+  function cubicBezier(p0, p1, p2, p3, t) {
+    const mt = 1 - t;
+
+    return (
+      mt * mt * mt * p0 +
+      3 * mt * mt * t * p1 +
+      3 * mt * t * t * p2 +
+      t * t * t * p3
+    );
+  }
+
+  // =========================================================
+  // BUILD CONTINUOUS POT STRIPE
+  // =========================================================
+
+  function makeStripePath(offset = 0) {
+    const points = [];
+
+    const sourceMin =
+      -totalSourceWidth * 0.9 + offset;
+
+    const sourceMax =
+      totalSourceWidth * 1.9 + offset;
+
+    const repeat = 42;
+
+    for (
+      let baseX = sourceMin;
+      baseX <= sourceMax;
+      baseX += repeat
+    ) {
+      const segment1 = [];
+
+      for (let i = 0; i <= 12; i++) {
+        const t = i / 12;
+
+        const sourceX =
+          baseX -
+          10 +
+          cubicBezier(
+            0,
+            15,
+            20,
+            35,
+            t
+          );
+
+        const relativeY =
+          cubicBezier(
+            42,
+            30,
+            12,
+            0,
+            t
+          );
+
+        segment1.push({
+          x: warpX(sourceX),
+          y: 500 + relativeY,
+        });
+      }
+
+      const segment2 = [];
+
+      for (let i = 1; i <= 8; i++) {
+        const t = i / 8;
+
+        const sourceX =
+          baseX +
+          cubicBezier(
+            25,
+            32,
+            40,
+            48,
+            t
+          );
+
+        const relativeY =
+          cubicBezier(
+            0,
+            -6,
+            -6,
+            0,
+            t
+          );
+
+        segment2.push({
+          x: warpX(sourceX),
+          y: 500 + relativeY,
+        });
+      }
+
+      points.push(
+        ...segment1,
+        ...segment2
+      );
+    }
+
+    if (points.length === 0) {
+      return "";
+    }
+
+    let path =
+      `M ${points[0].x} ${points[0].y}`;
+
+    for (let i = 1; i < points.length; i++) {
+      const previous = points[i - 1];
+      const current = points[i];
+
+      const controlX =
+        (previous.x + current.x) / 2;
+
+      const controlY =
+        (previous.y + current.y) / 2;
+
+      path += `
+        Q
+        ${previous.x}
+        ${previous.y}
+        ${controlX}
+        ${controlY}
+      `;
+    }
+
+    return path;
+  }
+
+  // =========================================================
+  // POT PATTERN
+  // =========================================================
+
+  const mainStripe =
+    makeStripePath(patternOffset);
+
+  const highlightStripe =
+    makeStripePath(patternOffset + 4);
+
+  return (
+    <div
+      style={{
+        width: "320px",
+        margin: "0 auto",
+        fontFamily: "sans-serif",
+      }}
+    >
+      <svg
+        viewBox="0 0 400 620"
+        width="320"
+        height="496"
+        style={{
+          display: "block",
+          overflow: "visible",
+        }}
+      >
+        <defs>
+          {/* =================================================
+              PETAL GRADIENT
+             ================================================= */}
+
+          <linearGradient
+            id="petalGradient"
+            x1="0"
+            y1="0"
+            x2="1"
+            y2="0"
+          >
+            <stop
+              offset="0%"
+              stopColor="#E7A91A"
+            />
+            <stop
+              offset="30%"
+              stopColor="#FFD43B"
+            />
+            <stop
+              offset="70%"
+              stopColor="#FFE066"
+            />
+            <stop
+              offset="100%"
+              stopColor="#D99613"
+            />
+          </linearGradient>
+
+          {/* =================================================
+              STEM GRADIENT
+             ================================================= */}
+
+          <linearGradient
+            id="stemGradient"
+            x1="0"
+            y1="0"
+            x2="1"
+            y2="0"
+          >
+            <stop
+              offset="0%"
+              stopColor="#287A35"
+            />
+            <stop
+              offset="25%"
+              stopColor="#55A84F"
+            />
+            <stop
+              offset="50%"
+              stopColor="#70C766"
+            />
+            <stop
+              offset="75%"
+              stopColor="#55A84F"
+            />
+            <stop
+              offset="100%"
+              stopColor="#287A35"
+            />
+          </linearGradient>
+
+          {/* =================================================
+              FLOWER CENTER
+             ================================================= */}
+
+          <radialGradient
+            id="centerGradient"
+            cx="38%"
+            cy="30%"
+            r="70%"
+          >
+            <stop
+              offset="0%"
+              stopColor="#E39A3A"
+            />
+            <stop
+              offset="20%"
+              stopColor="#C87520"
+            />
+            <stop
+              offset="55%"
+              stopColor="#A85C16"
+            />
+            <stop
+              offset="82%"
+              stopColor="#7A3F0C"
+            />
+            <stop
+              offset="100%"
+              stopColor="#4E2507"
+            />
+          </radialGradient>
+
+          {/* =================================================
+              LEAF GRADIENT
+             ================================================= */}
+
+          <linearGradient
+            id="leafGradient"
+            x1="0"
+            y1="0"
+            x2="1"
+            y2="1"
+          >
+            <stop
+              offset="0%"
+              stopColor="#70C766"
+            />
+            <stop
+              offset="55%"
+              stopColor="#4CAF50"
+            />
+            <stop
+              offset="100%"
+              stopColor="#287A35"
+            />
+          </linearGradient>
+
+          {/* =================================================
+              SOFT SHADOW
+             ================================================= */}
+
+          <filter
+            id="softShadow"
+            x="-30%"
+            y="-30%"
+            width="160%"
+            height="160%"
+          >
+            <feGaussianBlur
+              stdDeviation="4"
+            />
+          </filter>
+
+          {/* =================================================
+              POT BODY CLIP
+             ================================================= */}
+
+          <clipPath id="potBodyClip">
+            <path
+              d="
+                M125 505
+                L275 505
+                L255 575
+                Q200 590 145 575Z
+              "
+            />
+          </clipPath>
+        </defs>
+
+        {/* =====================================================
+            PLANT
+            ===================================================== */}
+
+        <g
+          transform={`
+            translate(200 500)
+            rotate(${lean})
+            scale(${scaleX} 1)
+            translate(-200 -500)
+          `}
+        >
+          {/* =================================================
+              STEM SHADOW
+             ================================================= */}
+
+          <path
+            d={`
+              M205 500
+              C200 420, 203 330, 200 ${stemTopY}
+            `}
+            fill="none"
+            stroke="#174D20"
+            strokeWidth="11"
+            strokeLinecap="round"
+            opacity="0.22"
+            transform="translate(3 2)"
+            filter="url(#softShadow)"
+            vectorEffect="non-scaling-stroke"
+          />
+
+          {/* =================================================
+              MAIN STEM
+             ================================================= */}
+
+          <path
+            d={`
+              M205 500
+              C200 420, 203 330, 200 ${stemTopY}
+            `}
+            fill="none"
+            stroke="url(#stemGradient)"
+            strokeWidth="8"
+            strokeLinecap="round"
+            vectorEffect="non-scaling-stroke"
+          />
+
+          {/* Stem highlight */}
+          <path
+            d={`
+              M203 488
+              C202 420, 204 340, 201 ${stemTopY + 10}
+            `}
+            fill="none"
+            stroke="#8BD77F"
+            strokeWidth="2"
+            strokeLinecap="round"
+            opacity="0.7"
+            vectorEffect="non-scaling-stroke"
+          />
+
+          {/* =================================================
+              L-SHAPED NECK
+             ================================================= */}
+
+          {/* Shadow */}
+          <path
+            d={`
+              M${neckBaseX} ${neckBaseY}
+              L${neckEndX} ${neckBaseY}
+              L${neckEndX} ${neckTopY}
+            `}
+            fill="none"
+            stroke="#174D20"
+            strokeWidth="14"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            opacity="0.25"
+            transform="translate(3 3)"
+            filter="url(#softShadow)"
+            vectorEffect="non-scaling-stroke"
+          />
+
+          {/* Main L-shaped stem */}
+          <path
+            d={`
+              M${neckBaseX} ${neckBaseY}
+              L${neckEndX} ${neckBaseY}
+              L${neckEndX} ${neckTopY}
+            `}
+            fill="none"
+            stroke="url(#stemGradient)"
+            strokeWidth="10"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            vectorEffect="non-scaling-stroke"
+          />
+
+          {/* Neck highlight */}
+          <path
+            d={`
+              M${neckBaseX + 1} ${neckBaseY - 2}
+              L${neckEndX - direction * 2} ${neckBaseY - 2}
+              L${neckEndX - direction * 2} ${neckTopY + 2}
+            `}
+            fill="none"
+            stroke="#8BD77F"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            opacity="0.75"
+            vectorEffect="non-scaling-stroke"
+          />
+
+          {/* =================================================
+              LEFT LEAF
+             ================================================= */}
+
+          <path
+            d="
+              M195 385
+              C130 350, 70 365, 45 420
+              C105 435, 155 415, 198 395Z
+            "
+            fill="#287A35"
+            opacity="0.35"
+            transform="translate(3 4)"
+          />
+
+          <path
+            d="
+              M195 385
+              C130 350, 70 365, 45 420
+              C105 435, 155 415, 198 395Z
+            "
+            fill="url(#leafGradient)"
+            stroke="#287A35"
+            strokeWidth="4"
+          />
+
+          {/* =================================================
+              RIGHT LEAF
+             ================================================= */}
+
+          <path
+            d="
+              M205 405
+              C270 365, 335 375, 355 425
+              C295 440, 250 425, 205 415Z
+            "
+            fill="#287A35"
+            opacity="0.35"
+            transform="translate(3 4)"
+          />
+
+          <path
+            d="
+              M205 405
+              C270 365, 335 375, 355 425
+              C295 440, 250 425, 205 415Z
+            "
+            fill="url(#leafGradient)"
+            stroke="#287A35"
+            strokeWidth="4"
+          />
+
+          {/* Leaf veins */}
+          <path
+            d="M55 418 C105 405, 150 395, 195 385"
+            fill="none"
+            stroke="#287A35"
+            strokeWidth="3"
+          />
+
+          <path
+            d="M350 423 C300 410, 255 405, 210 405"
+            fill="none"
+            stroke="#287A35"
+            strokeWidth="3"
+          />
+
+          {/* =================================================
+              FLOWER HEAD
+             ================================================= */}
+
+          {/* Rear flower shadow */}
+          <circle
+            cx={flowerCenterX}
+            cy={flowerCenterY}
+            r="78"
+            fill="#6D350A"
+            opacity="0.4625"
+            transform="translate(5 4)"
+          />
+
+          {/* Petals */}
+          <g>{petals}</g>
+
+          {/* Domed flower center */}
+          <circle
+            cx={flowerCenterX}
+            cy={flowerCenterY}
+            r="73"
+            fill="url(#centerGradient)"
+            stroke="#7A3F0C"
+            strokeWidth="5"
+          />
+
+          {/* Seeds */}
+          <g>{seeds}</g>
+
+          {/* Broad dome highlight */}
+          <ellipse
+            cx={flowerCenterX - 20}
+            cy="168"
+            rx="42"
+            ry="25"
+            fill="#F4B65A"
+            opacity="0.16"
+          />
+
+          {/* Smaller highlight */}
+          <ellipse
+            cx={flowerCenterX - 22}
+            cy="174"
+            rx="14"
+            ry="10"
+            fill="#F0A33A"
+            opacity="0.4225"
+          />
+
+          {/* Edge shading */}
+          <circle
+            cx={flowerCenterX}
+            cy={flowerCenterY}
+            r="70"
+            fill="none"
+            stroke="#4E2507"
+            strokeWidth="7"
+            opacity="0.273"
+          />
+        </g>
+
+        {/* =====================================================
+            STATIONARY POT
+            ===================================================== */}
+
+        {/* Pot rim */}
+        <path
+          d="
+            M115 485
+            Q200 465 285 485
+            L275 515
+            Q200 530 125 515Z
+          "
+          fill="#D32F2F"
+          stroke="#9B1C1C"
+          strokeWidth="4"
+        />
+
+        {/* Pot body */}
+        <path
+          d="
+            M125 505
+            L275 505
+            L255 575
+            Q200 590 145 575Z
+          "
+          fill="#E53935"
+          stroke="#9B1C1C"
+          strokeWidth="5"
+        />
+
+        {/* =====================================================
+            CONTINUOUS 7-ZONE WARPED PATTERN
+            ===================================================== */}
+
+        <g
+          clipPath="url(#potBodyClip)"
+          pointerEvents="none"
+        >
+          {/* Main decorative stripe */}
+          <path
+            d={mainStripe}
+            fill="none"
+            stroke="#FF7777"
+            strokeWidth="8"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            opacity="0.55"
+          />
+
+          {/* Thin highlight */}
+          <path
+            d={highlightStripe}
+            fill="none"
+            stroke="#FF9A9A"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            opacity="0.65"
+          />
+        </g>
+
+        {/* =====================================================
+            POT EDGE SHADING
+            ===================================================== */}
+
+        <path
+          d="
+            M125 505
+            Q136 507 145 509
+            L153 578
+            Q146 577 140 574Z
+          "
+          fill="#8F1A1A"
+          opacity="0.18"
+          pointerEvents="none"
+        />
+
+        <path
+          d="
+            M255 509
+            Q266 507 275 505
+            L260 574
+            Q254 577 247 578Z
+          "
+          fill="#8F1A1A"
+          opacity="0.18"
+          pointerEvents="none"
+        />
+
+        {/* =====================================================
+            POT HIGHLIGHT
+            ===================================================== */}
+
+        <path
+          d="M150 520 L165 565"
+          stroke="#FF6B6B"
+          strokeWidth="8"
+          strokeLinecap="round"
+          opacity="0.65"
+        />
+
+        {/* =====================================================
+            POT BASE
+            ===================================================== */}
+
+        <path
+          d="
+            M140 575
+            Q200 590 260 575
+            L255 590
+            Q200 605 145 590Z
+          "
+          fill="#B71C1C"
+        />
+      </svg>
+    </div>
+  );
+}
