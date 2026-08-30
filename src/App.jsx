@@ -6730,7 +6730,7 @@ function PinholeViewInset({
       style={{
         position: "absolute",
         right: "14px",
-        top: "58px",
+        top: "100px",
         zIndex: 10,
         width: "184px",
         transform:
