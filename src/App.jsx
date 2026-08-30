@@ -1651,10 +1651,10 @@ function PinholeOpticsLearn({ onOpen3D }) {
         <div className="pol-lab-handoff">
           <div className="pol-lab-handoff-copy">
             <p className="pol-lab-handoff-kicker">Final chapter · 3D Lab</p>
-            <p className="pol-lab-handoff-title">Put the whole camera obscura together</p>
+            <p className="pol-lab-handoff-title">Put the whole camera together</p>
             <p className="pol-lab-handoff-text">
-              You have traced individual rays, changed the aperture, and moved the
-              screen. Now explore those ideas together in the complete 3D system.
+              Now you've seen how a pinhole camera creates an image,
+              put it all together in 3D.
             </p>
           </div>
           <button
