@@ -66,6 +66,17 @@ function projectToScreen(source, gate, screenX) {
   return source.y + t * (gate.y - source.y);
 }
 
+// Stable pseudo-random variation for the Learn ray fans. Keeping this
+// deterministic prevents the rays from jittering whenever React re-renders.
+function rayAngleJitter(pointIndex, rayIndex) {
+  const value = Math.sin(
+    (pointIndex + 1) * 12.9898 +
+    (rayIndex + 1) * 78.233
+  ) * 43758.5453;
+
+  return (value - Math.floor(value)) * 2 - 1;
+}
+
 const STEPS = [
   { key: "trace", label: "Trace a ray" },
   { key: "aperture", label: "Resize the hole" },
@@ -166,6 +177,12 @@ function SunflowerArt() {
 function PinholeOpticsLearn({ onOpen3D }) {
   const svgRef = useRef(null);
   const [step, setStep] = useState(0);
+  const [draggedLearnSteps, setDraggedLearnSteps] = useState([
+    false,
+    false,
+    false,
+  ]);
+  const [hasDraggedSourceHandle, setHasDraggedSourceHandle] = useState(false);
 
   // Step 1 state – a single source point, freely draggable up and down
   // the sunflower (flower / stem / pot), and three draggable rays.
@@ -208,7 +225,7 @@ function PinholeOpticsLearn({ onOpen3D }) {
     return { x: p.x, y: p.y };
   }, []);
 
-  const dragProps = (onMove) => ({
+  const dragProps = (onMove, handleKind = "page") => ({
     onPointerDown: (e) => {
       /*
          Pointer interaction should not create a visible focus state.
@@ -233,6 +250,16 @@ function PinholeOpticsLearn({ onOpen3D }) {
     },
     onPointerMove: (e) => {
       if (e.buttons === 0) return;
+      if (handleKind === "source") {
+        setHasDraggedSourceHandle(true);
+      }
+      setDraggedLearnSteps((dragged) =>
+        dragged[step]
+          ? dragged
+          : dragged.map((value, index) =>
+            index === step ? true : value
+          )
+      );
       const p = getSvgPoint(e.clientX, e.clientY);
       onMove(p);
     },
@@ -427,12 +454,25 @@ function PinholeOpticsLearn({ onOpen3D }) {
     const y = HEAD_TOP + (i / (PLANT_POINT_COUNT - 1)) * (POT_BOTTOM - HEAD_TOP);
     return { x: SOURCE_X, y, color: colorForY(y) };
   });
-  const GATE_SAMPLES = 9;
-  const gateSampleYs = Array.from({ length: GATE_SAMPLES }, (_, i) =>
-    apTop + (i / (GATE_SAMPLES - 1)) * (apBottom - apTop)
+  const GATE_SAMPLES = 10;
+  const gateSampleFractions = Array.from(
+    { length: GATE_SAMPLES },
+    (_, i) => i / (GATE_SAMPLES - 1)
   );
-  const plantFans = plantPoints.map((pt) => {
-    const landings = gateSampleYs.map((gy) =>
+  const plantFans = plantPoints.map((pt, pointIndex) => {
+    const gateYs = gateSampleFractions.map((fraction, rayIndex) => {
+      // Preserve the exact fan edges, while giving the interior rays a
+      // slight individual angle variation (up to 2.5% of the opening).
+      const jitter =
+        rayIndex === 0 || rayIndex === GATE_SAMPLES - 1
+          ? 0
+          : rayAngleJitter(pointIndex, rayIndex) * 0.025;
+
+      return apTop +
+        clamp(fraction + jitter, 0, 1) *
+        (apBottom - apTop);
+    });
+    const landings = gateYs.map((gy) =>
       projectToScreen(pt, { x: WALL_X, y: gy }, stepScreenX)
     );
 
@@ -447,6 +487,7 @@ function PinholeOpticsLearn({ onOpen3D }) {
 
     return {
       pt,
+      gateYs,
       landings,
       spread,
     };
@@ -538,6 +579,26 @@ function PinholeOpticsLearn({ onOpen3D }) {
         .pol-svg-control:focus-visible {
           outline: 3px solid #f29b66;
           outline-offset: 2px;
+        }
+        .pol-drag-handle-hint {
+          transform-box: fill-box;
+          transform-origin: center;
+          animation: pol-drag-handle-pulse 0.9s ease-in-out infinite;
+        }
+        @keyframes pol-drag-handle-pulse {
+          0%, 100% {
+            transform: scale(1);
+            filter: drop-shadow(0 0 0 rgba(255,255,255,0));
+          }
+          50% {
+            transform: scale(1.16);
+            filter: drop-shadow(0 0 5px rgba(255,255,255,0.95));
+          }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .pol-drag-handle-hint {
+            animation: none;
+          }
         }
 
         /* Keep all Learn text/control rows aligned to the canvas width. */
@@ -912,15 +973,16 @@ function PinholeOpticsLearn({ onOpen3D }) {
                   }}
                   {...dragProps((p) => {
                     setSourceY(clamp(p.y, PETAL_TOP + 2, POT_BOTTOM - 2));
-                  })}
+                  }, "source")}
                 />
                 <circle
+                  className={!hasDraggedSourceHandle ? "pol-drag-handle-hint" : undefined}
                   cx={SOURCE_X}
                   cy={sourceY}
-                  r="10"
+                  r="11"
                   fill={sourceColor}
-                  stroke="#15120d"
-                  strokeWidth="2"
+                  stroke="#ece3ce"
+                  strokeWidth="1.7"
                   pointerEvents="none"
                 />
               </g>
@@ -1137,6 +1199,7 @@ function PinholeOpticsLearn({ onOpen3D }) {
                       })}
                     />
                     <circle
+                      className={!draggedLearnSteps[step] ? "pol-drag-handle-hint" : undefined}
                       cx={
                         rayHandlePositions[
                           i
@@ -1202,7 +1265,7 @@ function PinholeOpticsLearn({ onOpen3D }) {
             {step === 1 && (
               <>
                 {plantFans.map((f, pi) =>
-                  gateSampleYs.map((gy, i) => (
+                  f.gateYs.map((gy, i) => (
                     <g key={`${pi}-${i}`}>
                       <line x1={f.pt.x} y1={f.pt.y} x2={WALL_X} y2={gy} stroke={f.pt.color} strokeWidth="1" opacity="0.16" />
                       <line x1={WALL_X} y1={gy} x2={stepScreenX} y2={f.landings[i]} stroke={f.pt.color} strokeWidth="1" opacity="0.16" />
@@ -1286,6 +1349,7 @@ function PinholeOpticsLearn({ onOpen3D }) {
                 />
 
                 <circle
+                  className={!draggedLearnSteps[step] ? "pol-drag-handle-hint" : undefined}
                   cx={apertureHandle.x}
                   cy={apertureHandle.y}
                   r="11"
@@ -1367,6 +1431,7 @@ function PinholeOpticsLearn({ onOpen3D }) {
                   })}
                 />
                 <circle
+                  className={!draggedLearnSteps[step] ? "pol-drag-handle-hint" : undefined}
                   cx={stepScreenX + 2}
                   cy={70}
                   r="11"
@@ -6005,6 +6070,64 @@ function ShadowCastingLight() {
    After the transition, normal orbiting is restored.
 ========================================================= */
 
+const PINHOLE_MIN_AZIMUTH = THREE.MathUtils.degToRad(72);
+const PINHOLE_MAX_AZIMUTH = THREE.MathUtils.degToRad(108);
+const PINHOLE_MIN_POLAR = THREE.MathUtils.degToRad(55);
+const PINHOLE_MAX_POLAR = THREE.MathUtils.degToRad(125);
+
+function PinholeViewOrbitConstraint({
+  controlsRef,
+  preset,
+}) {
+  const { camera } = useThree();
+  const offsetRef = useRef(new THREE.Vector3());
+  const sphericalRef = useRef(new THREE.Spherical());
+
+  useFrame(() => {
+    if (
+      preset !== "pinhole" ||
+      !controlsRef.current
+    ) {
+      return;
+    }
+
+    const controls = controlsRef.current;
+    const offset = offsetRef.current
+      .copy(camera.position)
+      .sub(controls.target);
+    const spherical = sphericalRef.current
+      .setFromVector3(offset);
+    const limitedTheta = clamp(
+      spherical.theta,
+      PINHOLE_MIN_AZIMUTH,
+      PINHOLE_MAX_AZIMUTH
+    );
+    const limitedPhi = clamp(
+      spherical.phi,
+      PINHOLE_MIN_POLAR,
+      PINHOLE_MAX_POLAR
+    );
+
+    if (
+      Math.abs(limitedTheta - spherical.theta) < 1e-7 &&
+      Math.abs(limitedPhi - spherical.phi) < 1e-7
+    ) {
+      return;
+    }
+
+    spherical.theta = limitedTheta;
+    spherical.phi = limitedPhi;
+
+    camera.position
+      .copy(controls.target)
+      .add(offset.setFromSpherical(spherical));
+    camera.lookAt(controls.target);
+    controls.update();
+  });
+
+  return null;
+}
+
 function CameraPresetController({
   preset,
   objectDistance,
@@ -6093,7 +6216,9 @@ function CameraPresetController({
           return {
             /*
                Chamber-side view looking straight through the
-               aperture in the direction of the object.
+               aperture in the direction of the object. Orbit around
+               the aperture itself so the angle limits describe the
+               observer's true viewing angle through the pinhole.
             */
             position:
               new THREE.Vector3(
@@ -6103,7 +6228,7 @@ function CameraPresetController({
               ),
             target:
               new THREE.Vector3(
-                objectX,
+                0,
                 2.15,
                 0
               ),
@@ -6383,15 +6508,15 @@ function AdaptiveControlSensitivity({
       */
       controls.rotateSpeed =
         THREE.MathUtils.lerp(
-          0.04,
-          0.14,
+          0.28,
+          0.38,
           t
         );
 
       controls.panSpeed =
         THREE.MathUtils.lerp(
-          0.05,
-          0.16,
+          0.20,
+          0.42,
           t
         );
     } else {
@@ -7054,6 +7179,11 @@ function SceneWithRays({
         }
       />
 
+      <PinholeViewOrbitConstraint
+        controlsRef={controlsRef}
+        preset={cameraPreset}
+      />
+
       <PinholeGuideTracker
         active={
           cameraPreset ===
@@ -7298,11 +7428,25 @@ function SceneWithRays({
           2.0,
           0,
         ]}
+        minAzimuthAngle={
+          cameraPreset === "pinhole"
+            ? PINHOLE_MIN_AZIMUTH
+            : -Infinity
+        }
+        maxAzimuthAngle={
+          cameraPreset === "pinhole"
+            ? PINHOLE_MAX_AZIMUTH
+            : Infinity
+        }
         minPolarAngle={
-          Math.PI * 0.04
+          cameraPreset === "pinhole"
+            ? PINHOLE_MIN_POLAR
+            : Math.PI * 0.04
         }
         maxPolarAngle={
-          Math.PI * 0.75
+          cameraPreset === "pinhole"
+            ? PINHOLE_MAX_POLAR
+            : Math.PI * 0.75
         }
       />
     </>
