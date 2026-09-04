@@ -6072,8 +6072,8 @@ function ShadowCastingLight() {
 
 const PINHOLE_MIN_AZIMUTH = THREE.MathUtils.degToRad(72);
 const PINHOLE_MAX_AZIMUTH = THREE.MathUtils.degToRad(108);
-const PINHOLE_MIN_POLAR = THREE.MathUtils.degToRad(55);
-const PINHOLE_MAX_POLAR = THREE.MathUtils.degToRad(125);
+const PINHOLE_MIN_POLAR = THREE.MathUtils.degToRad(65);
+const PINHOLE_MAX_POLAR = THREE.MathUtils.degToRad(115);
 
 function PinholeViewOrbitConstraint({
   controlsRef,
@@ -6184,9 +6184,9 @@ function CameraPresetController({
           return {
             position:
               new THREE.Vector3(
-                objectX - 2.8,
+                objectX + 5.0,
                 4.0,
-                6.2
+                5.0
               ),
             target:
               new THREE.Vector3(
@@ -6200,9 +6200,9 @@ function CameraPresetController({
           return {
             position:
               new THREE.Vector3(
-                1.15,
-                2.85,
-                2.8
+                0.55,
+                2.9,
+                3.3
               ),
             target:
               new THREE.Vector3(
