@@ -1,3 +1,4 @@
+import { BrandLogo, SiteFooter } from "./Branding.jsx";
 import React, {
   useCallback,
   useEffect,
@@ -1665,6 +1666,7 @@ function PinholeOpticsLearn({ onOpen3D }) {
             Explore in 3D →
           </button>
         </div>
+        <SiteFooter />
       </div>
     </div>
   );
@@ -8043,6 +8045,8 @@ export default function App() {
         }
         body { overflow: hidden; }
       `}</style>
+
+      <BrandLogo className="corner-logo" />
 
       <nav
         aria-label="Main sections"

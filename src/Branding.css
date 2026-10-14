@@ -1,0 +1,48 @@
+/* awm Physics branding: kept deliberately quiet so it never competes with the simulation */
+.awm-logo-link {
+  display: inline-block;
+  flex: none;
+  line-height: 0;
+  border-radius: 12px;
+  opacity: 0.85;
+  transition: opacity 0.15s ease, transform 0.2s ease;
+}
+.awm-logo-link:hover,
+.awm-logo-link:focus-visible {
+  opacity: 1;
+  transform: rotate(8deg);
+}
+.awm-logo-link img {
+  width: 52px; /* level with the Learn / 3D Lab switcher on the right */
+  height: 52px;
+  display: block;
+}
+
+/* Pinned top-left on both sections, mirroring the section switcher top-right */
+.awm-logo-link.corner-logo {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  z-index: 100;
+}
+
+/* One line of small muted links at the end of the Learn page */
+.awm-footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px 10px;
+  margin: 0 auto;
+  padding: 28px 16px 0;
+  color: rgba(38, 59, 74, 0.5);
+  font: 12px/1.4 'IBM Plex Sans', ui-sans-serif, system-ui, sans-serif;
+}
+.awm-footer a {
+  color: rgba(38, 59, 74, 0.72);
+  text-decoration: none;
+}
+.awm-footer a:hover,
+.awm-footer a:focus-visible {
+  color: #263b4a;
+  text-decoration: underline;
+}
